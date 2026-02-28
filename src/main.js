@@ -8,10 +8,73 @@ const resetBtn = document.getElementById('resetBtn')
 const logBtn = document.getElementById('logBtn')
 const modal = document.getElementById('modal')
 const modalClose = document.getElementById('modalClose')
+const rankBox = document.getElementById('rankBox')
+const rankIcon = document.getElementById('rankIcon')
+const rankName = document.getElementById('rankName')
+const rankProgressBar = document.getElementById('rankProgressBar')
+const rankInfo = document.getElementById('rankInfo')
+const levelUp = document.getElementById('levelUp')
+const levelUpIcon = document.getElementById('levelUpIcon')
+const levelUpRank = document.getElementById('levelUpRank')
+
+// 段位配置
+const RANKS = [
+  { min: 0, name: '初入佛门', icon: '🙏' },
+  { min: 100, name: '善男信女', icon: '📿' },
+  { min: 500, name: '虔诚居士', icon: '🪷' },
+  { min: 1000, name: '苦行僧', icon: '🧘' },
+  { min: 3000, name: '罗汉', icon: '☸️' },
+  { min: 10000, name: '菩萨', icon: '🪬' },
+  { min: 50000, name: '佛陀', icon: '🌟' },
+  { min: 100000, name: '功德圆满', icon: '✨' }
+]
 
 // 从 localStorage 获取计数
 let count = parseInt(localStorage.getItem('muyuCount') || '0', 10)
+let currentRankIndex = getRankIndex(count)
+
 counterEl.textContent = count.toLocaleString()
+updateRankDisplay()
+
+// 获取段位索引
+function getRankIndex(merit) {
+  for (let i = RANKS.length - 1; i >= 0; i--) {
+    if (merit >= RANKS[i].min) return i
+  }
+  return 0
+}
+
+// 更新段位显示
+function updateRankDisplay() {
+  const rankIndex = getRankIndex(count)
+  const rank = RANKS[rankIndex]
+  const nextRank = RANKS[rankIndex + 1]
+
+  rankBox.dataset.rank = rankIndex
+  rankIcon.textContent = rank.icon
+  rankName.textContent = rank.name
+
+  if (nextRank) {
+    const progress = ((count - rank.min) / (nextRank.min - rank.min)) * 100
+    rankProgressBar.style.width = `${Math.min(progress, 100)}%`
+    rankInfo.textContent = `距离 ${nextRank.name}: ${(nextRank.min - count).toLocaleString()}`
+  } else {
+    rankProgressBar.style.width = '100%'
+    rankInfo.textContent = '已达最高段位'
+  }
+}
+
+// 显示升级动画
+function showLevelUp(rankIndex) {
+  const rank = RANKS[rankIndex]
+  levelUpIcon.textContent = rank.icon
+  levelUpRank.textContent = rank.name
+  levelUp.classList.add('show')
+
+  setTimeout(() => {
+    levelUp.classList.remove('show')
+  }, 2000)
+}
 
 // 触发涟漪
 function triggerRipple() {
@@ -45,6 +108,16 @@ function handleTap(e) {
   localStorage.setItem('muyuCount', count.toString())
   counterEl.textContent = count.toLocaleString()
 
+  // 检查是否升级
+  const newRankIndex = getRankIndex(count)
+  if (newRankIndex > currentRankIndex) {
+    currentRankIndex = newRankIndex
+    showLevelUp(newRankIndex)
+  }
+
+  // 更新段位显示
+  updateRankDisplay()
+
   // 触发木鱼动画
   woodenFish.classList.remove('tapped')
   void woodenFish.offsetWidth
@@ -63,8 +136,10 @@ function handleTap(e) {
 // 重置功德
 function handleReset() {
   count = 0
+  currentRankIndex = 0
   localStorage.setItem('muyuCount', '0')
   counterEl.textContent = '0'
+  updateRankDisplay()
 }
 
 // 模态框控制
@@ -84,6 +159,9 @@ logBtn.addEventListener('click', openModal)
 modalClose.addEventListener('click', closeModal)
 modal.addEventListener('click', (e) => {
   if (e.target === modal) closeModal()
+})
+levelUp.addEventListener('click', () => {
+  levelUp.classList.remove('show')
 })
 
 // 入场动画完成后清除，避免干扰点击动画

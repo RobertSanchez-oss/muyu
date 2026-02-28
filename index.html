@@ -20,6 +20,7 @@
       <div class="modal-content">
         <h3>更新记录</h3>
         <ul class="log-list">
+          <li><strong>v1.1.0</strong> - 新增段位系统，功德越多段位越高</li>
           <li><strong>v1.0.0</strong> - 初始版本，敲木鱼积攒功德</li>
         </ul>
         <button class="modal-close" id="modalClose">关闭</button>
@@ -57,7 +58,26 @@
         </svg>
         <span class="ripple" id="ripple"></span>
       </button>
+      <!-- 段位显示 -->
+      <div class="rank-box" id="rankBox">
+        <div class="rank-badge" id="rankBadge">
+          <span class="rank-icon" id="rankIcon"></span>
+          <span class="rank-name" id="rankName">初入佛门</span>
+        </div>
+        <div class="rank-progress">
+          <div class="rank-progress-bar" id="rankProgressBar"></div>
+        </div>
+        <div class="rank-info" id="rankInfo">距离下一段位: 100</div>
+      </div>
     </main>
+    <!-- 升级弹窗 -->
+    <div class="level-up" id="levelUp">
+      <div class="level-up-content">
+        <div class="level-up-icon" id="levelUpIcon"></div>
+        <div class="level-up-text">段位提升</div>
+        <div class="level-up-rank" id="levelUpRank"></div>
+      </div>
+    </div>
     <script type="module" src="/src/main.js"></script>
   </body>
 </html>
