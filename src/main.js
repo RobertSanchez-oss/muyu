@@ -1,5 +1,79 @@
 import './style.css'
 
+// ============ 数据安全模块 ============
+const SECRET_KEY = 'muyu_2024_gongde'
+
+// 简单加密
+function encrypt(data) {
+  const str = JSON.stringify(data)
+  let result = ''
+  for (let i = 0; i < str.length; i++) {
+    result += String.fromCharCode(
+      str.charCodeAt(i) ^ SECRET_KEY.charCodeAt(i % SECRET_KEY.length)
+    )
+  }
+  return btoa(result)
+}
+
+// 解密
+function decrypt(encoded) {
+  try {
+    const str = atob(encoded)
+    let result = ''
+    for (let i = 0; i < str.length; i++) {
+      result += String.fromCharCode(
+        str.charCodeAt(i) ^ SECRET_KEY.charCodeAt(i % SECRET_KEY.length)
+      )
+    }
+    return JSON.parse(result)
+  } catch {
+    return null
+  }
+}
+
+// 生成校验和
+function generateChecksum(count, timestamp) {
+  const data = `${count}_${timestamp}_${SECRET_KEY}`
+  let hash = 0
+  for (let i = 0; i < data.length; i++) {
+    hash = ((hash << 5) - hash) + data.charCodeAt(i)
+    hash = hash & hash
+  }
+  return Math.abs(hash).toString(16)
+}
+
+// 安全存储
+function saveData(count) {
+  const timestamp = Date.now()
+  const checksum = generateChecksum(count, timestamp)
+  const data = { c: count, t: timestamp, h: checksum }
+  localStorage.setItem('muyu_data', encrypt(data))
+}
+
+// 安全读取
+function loadData() {
+  const encoded = localStorage.getItem('muyu_data')
+  if (!encoded) return { count: 0, valid: true }
+
+  const data = decrypt(encoded)
+  if (!data) return { count: 0, valid: false, reason: '数据损坏' }
+
+  // 验证校验和
+  const expectedChecksum = generateChecksum(data.c, data.t)
+  if (data.h !== expectedChecksum) {
+    return { count: 0, valid: false, reason: '数据被篡改' }
+  }
+
+  // 验证数值合理性
+  if (data.c < 0 || data.c > 10000000) {
+    return { count: 0, valid: false, reason: '数据异常' }
+  }
+
+  return { count: data.c, valid: true }
+}
+
+// ============ DOM 元素 ============
+
 const woodenFish = document.getElementById('woodenFish')
 const stage = document.getElementById('stage')
 const counterEl = document.getElementById('counter')
@@ -29,8 +103,24 @@ const RANKS = [
   { min: 100000, name: '功德圆满', icon: '✨' }
 ]
 
-// 从 localStorage 获取计数
-let count = parseInt(localStorage.getItem('muyuCount') || '0', 10)
+// 从安全存储获取计数
+const loadedData = loadData()
+let count = loadedData.count
+
+// 如果数据被篡改，显示警告
+if (!loadedData.valid) {
+  console.warn('功德数据异常，已重置:', loadedData.reason)
+  saveData(0)
+}
+
+// 兼容旧版数据迁移
+const oldCount = localStorage.getItem('muyuCount')
+if (oldCount && !localStorage.getItem('muyu_data')) {
+  count = parseInt(oldCount, 10) || 0
+  saveData(count)
+  localStorage.removeItem('muyuCount')
+}
+
 let currentRankIndex = getRankIndex(count)
 
 counterEl.textContent = count.toLocaleString()
@@ -105,7 +195,7 @@ function handleTap(e) {
 
   // 增加计数
   count++
-  localStorage.setItem('muyuCount', count.toString())
+  saveData(count)
   counterEl.textContent = count.toLocaleString()
 
   // 检查是否升级
@@ -137,7 +227,7 @@ function handleTap(e) {
 function handleReset() {
   count = 0
   currentRankIndex = 0
-  localStorage.setItem('muyuCount', '0')
+  saveData(0)
   counterEl.textContent = '0'
   updateRankDisplay()
 }
