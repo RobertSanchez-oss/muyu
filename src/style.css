@@ -438,3 +438,98 @@ body {
 .level-up.show .level-up-rank {
   animation: levelUpGlow 1s ease infinite;
 }
+
+/* ============ 移动端适配 ============ */
+@media (max-width: 480px) {
+  .header {
+    padding: 0.8rem 1rem;
+  }
+
+  .merit-label {
+    font-size: 0.8rem;
+  }
+
+  .counter {
+    font-size: 1.3rem;
+  }
+
+  .header-btns {
+    gap: 0.4rem;
+  }
+
+  .header-btn {
+    padding: 0.35rem 0.7rem;
+    font-size: 0.75rem;
+  }
+
+  .stage {
+    gap: 1.5rem;
+  }
+
+  .wooden-fish {
+    width: min(200px, 65vw);
+  }
+
+  .rank-box {
+    padding: 0.8rem 1.2rem;
+    min-width: 160px;
+  }
+
+  .rank-icon {
+    font-size: 1.2rem;
+  }
+
+  .rank-name {
+    font-size: 1rem;
+  }
+
+  .rank-info {
+    font-size: 0.7rem;
+  }
+
+  .merit {
+    font-size: 1.2rem;
+  }
+
+  .level-up-icon {
+    font-size: 3rem;
+  }
+
+  .level-up-rank {
+    font-size: 1.6rem;
+  }
+
+  .modal-content {
+    padding: 1.2rem 1.5rem;
+  }
+
+  .log-list {
+    font-size: 0.85rem;
+  }
+}
+
+/* 超小屏幕 */
+@media (max-width: 360px) {
+  .header {
+    flex-wrap: wrap;
+    gap: 0.5rem;
+  }
+
+  .wooden-fish {
+    width: min(180px, 60vw);
+  }
+}
+
+/* 禁用触摸高亮 */
+* {
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* 安全区域适配 (刘海屏) */
+@supports (padding-top: env(safe-area-inset-top)) {
+  .header {
+    padding-top: max(0.8rem, env(safe-area-inset-top));
+    padding-left: max(1rem, env(safe-area-inset-left));
+    padding-right: max(1rem, env(safe-area-inset-right));
+  }
+}
