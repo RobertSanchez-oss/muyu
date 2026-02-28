@@ -21,6 +21,7 @@
       <div class="modal-content">
         <h3>更新记录</h3>
         <ul class="log-list">
+          <li><strong>v1.4.0</strong> - 新增邀请码绑定，支持跨设备同步</li>
           <li><strong>v1.3.0</strong> - 新增全网排行榜，真实排名</li>
           <li><strong>v1.2.1</strong> - 优化移动端适配，支持刘海屏</li>
           <li><strong>v1.2.0</strong> - 数据安全加固，防止作弊</li>
@@ -38,6 +39,21 @@
           <li>当前段位：<strong id="rankLevel">初入佛门</strong></li>
           <li>全网排名：<strong id="rankScope">加载中...</strong></li>
         </ul>
+        <!-- 邀请码区域 -->
+        <div class="invite-section" id="inviteSection">
+          <div class="invite-divider"></div>
+          <div class="invite-title">跨设备同步</div>
+          <div class="invite-code-box" id="inviteCodeBox">
+            <span class="invite-label">我的邀请码：</span>
+            <span class="invite-code" id="myInviteCode">--</span>
+            <button class="invite-copy-btn" id="copyCodeBtn" type="button">复制</button>
+          </div>
+          <div class="invite-bind-box" id="inviteBindBox">
+            <input type="text" class="invite-input" id="inviteInput" placeholder="输入邀请码绑定账号" maxlength="6" />
+            <button class="invite-bind-btn" id="bindCodeBtn" type="button">绑定</button>
+          </div>
+          <div class="invite-tip" id="inviteTip">生成邀请码后，可在其他设备输入绑定同步数据</div>
+        </div>
         <button class="modal-close" id="rankClose">关闭</button>
       </div>
     </div>

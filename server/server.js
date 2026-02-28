@@ -15,11 +15,32 @@ db.exec(`
     nickname TEXT DEFAULT '匿名',
     merit INTEGER DEFAULT 0,
     rank_index INTEGER DEFAULT 0,
+    invite_code TEXT UNIQUE,
     created_at INTEGER,
     updated_at INTEGER
   )
 `)
 db.exec(`CREATE INDEX IF NOT EXISTS idx_merit ON users(merit DESC)`)
+
+// 迁移：为旧数据库添加invite_code列
+try {
+  db.exec(`ALTER TABLE users ADD COLUMN invite_code TEXT`)
+} catch (e) {
+  // 列已存在，忽略错误
+}
+
+// 创建唯一索引
+db.exec(`CREATE UNIQUE INDEX IF NOT EXISTS idx_invite_code ON users(invite_code)`)
+
+// 生成6位邀请码
+function generateInviteCode() {
+  const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789' // 排除容易混淆的字符
+  let code = ''
+  for (let i = 0; i < 6; i++) {
+    code += chars.charAt(Math.floor(Math.random() * chars.length))
+  }
+  return code
+}
 
 app.use(cors())
 app.use(express.json())
@@ -127,6 +148,70 @@ app.post('/api/nickname', (req, res) => {
 
   db.prepare('UPDATE users SET nickname = ? WHERE id = ?').run(safeName, userId)
   res.json({ success: true })
+})
+
+// 生成邀请码
+app.post('/api/invite/generate', (req, res) => {
+  const { userId } = req.body
+
+  if (!userId) {
+    return res.status(400).json({ success: false, message: '参数错误' })
+  }
+
+  const user = db.prepare('SELECT * FROM users WHERE id = ?').get(userId)
+  if (!user) {
+    return res.status(404).json({ success: false, message: '用户不存在' })
+  }
+
+  // 如果已有邀请码，直接返回
+  if (user.invite_code) {
+    return res.json({ success: true, inviteCode: user.invite_code })
+  }
+
+  // 生成新邀请码，确保唯一
+  let inviteCode
+  let attempts = 0
+  while (attempts < 10) {
+    inviteCode = generateInviteCode()
+    const existing = db.prepare('SELECT id FROM users WHERE invite_code = ?').get(inviteCode)
+    if (!existing) break
+    attempts++
+  }
+
+  if (attempts >= 10) {
+    return res.status(500).json({ success: false, message: '生成邀请码失败，请重试' })
+  }
+
+  db.prepare('UPDATE users SET invite_code = ? WHERE id = ?').run(inviteCode, userId)
+  res.json({ success: true, inviteCode })
+})
+
+// 使用邀请码绑定账号
+app.post('/api/invite/bind', (req, res) => {
+  const { userId, inviteCode } = req.body
+
+  if (!userId || !inviteCode) {
+    return res.status(400).json({ success: false, message: '参数错误' })
+  }
+
+  // 查找邀请码对应的用户
+  const targetUser = db.prepare('SELECT * FROM users WHERE invite_code = ?').get(inviteCode.toUpperCase())
+  if (!targetUser) {
+    return res.status(404).json({ success: false, message: '邀请码无效' })
+  }
+
+  // 不能绑定自己
+  if (targetUser.id === userId) {
+    return res.status(400).json({ success: false, message: '不能绑定自己的邀请码' })
+  }
+
+  // 返回目标用户的ID，前端会更新本地存储
+  res.json({
+    success: true,
+    targetUserId: targetUser.id,
+    merit: targetUser.merit,
+    rankIndex: targetUser.rank_index
+  })
 })
 
 app.listen(PORT, () => {

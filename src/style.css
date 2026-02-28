@@ -542,3 +542,138 @@ body {
   font-size: 0.82rem;
   line-height: 1.5;
 }
+
+/* 邀请码区域 */
+.invite-section {
+  margin-top: 1rem;
+  padding-top: 0.8rem;
+}
+
+.invite-divider {
+  height: 1px;
+  background: rgba(74, 53, 32, 0.15);
+  margin-bottom: 0.8rem;
+}
+
+.invite-title {
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: var(--text-color);
+  margin-bottom: 0.8rem;
+}
+
+.invite-code-box {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 0.6rem;
+  flex-wrap: wrap;
+}
+
+.invite-label {
+  font-size: 0.85rem;
+  color: var(--text-color);
+  opacity: 0.8;
+}
+
+.invite-code {
+  font-size: 1.1rem;
+  font-weight: 700;
+  font-family: 'Courier New', monospace;
+  letter-spacing: 0.15em;
+  color: var(--accent);
+  background: rgba(74, 53, 32, 0.08);
+  padding: 0.3rem 0.6rem;
+  border-radius: 4px;
+}
+
+.invite-copy-btn {
+  padding: 0.25rem 0.5rem;
+  font-size: 0.75rem;
+  color: var(--text-color);
+  background: rgba(74, 53, 32, 0.1);
+  border: 1px solid rgba(74, 53, 32, 0.2);
+  border-radius: 4px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.invite-copy-btn:hover {
+  background: rgba(74, 53, 32, 0.15);
+}
+
+.invite-copy-btn:active {
+  transform: scale(0.95);
+}
+
+.invite-bind-box {
+  display: flex;
+  gap: 0.5rem;
+  margin-bottom: 0.6rem;
+}
+
+.invite-input {
+  flex: 1;
+  padding: 0.5rem 0.7rem;
+  font-size: 0.9rem;
+  font-family: 'Courier New', monospace;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--text-color);
+  background: rgba(255, 255, 255, 0.8);
+  border: 1px solid rgba(74, 53, 32, 0.2);
+  border-radius: 6px;
+  outline: none;
+  transition: border-color 0.2s ease;
+}
+
+.invite-input::placeholder {
+  text-transform: none;
+  letter-spacing: normal;
+  font-family: 'PingFang SC', 'Microsoft YaHei', sans-serif;
+}
+
+.invite-input:focus {
+  border-color: var(--accent);
+}
+
+.invite-bind-btn {
+  padding: 0.5rem 1rem;
+  font-size: 0.85rem;
+  color: #fff;
+  background: var(--accent);
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.invite-bind-btn:hover {
+  background: #b08a5c;
+}
+
+.invite-bind-btn:active {
+  transform: scale(0.95);
+}
+
+.invite-bind-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.invite-tip {
+  font-size: 0.75rem;
+  color: var(--text-color);
+  opacity: 0.6;
+  line-height: 1.4;
+}
+
+.invite-tip.success {
+  color: #4caf50;
+  opacity: 1;
+}
+
+.invite-tip.error {
+  color: #f44336;
+  opacity: 1;
+}

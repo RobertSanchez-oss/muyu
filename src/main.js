@@ -57,6 +57,26 @@ async function fetchLeaderboard() {
   return await apiCall('/leaderboard?limit=20')
 }
 
+// 生成邀请码
+async function generateInviteCode() {
+  const userId = localStorage.getItem('muyu_user_id')
+  if (!userId) return null
+  return await apiCall('/invite/generate', {
+    method: 'POST',
+    body: JSON.stringify({ userId })
+  })
+}
+
+// 绑定邀请码
+async function bindInviteCode(inviteCode) {
+  const userId = localStorage.getItem('muyu_user_id')
+  if (!userId) return null
+  return await apiCall('/invite/bind', {
+    method: 'POST',
+    body: JSON.stringify({ userId, inviteCode })
+  })
+}
+
 // ============ 数据安全模块 ============
 const SECRET_KEY = 'muyu_2024_gongde'
 
@@ -145,6 +165,12 @@ const rankInfo = document.getElementById('rankInfo')
 const levelUp = document.getElementById('levelUp')
 const levelUpIcon = document.getElementById('levelUpIcon')
 const levelUpRank = document.getElementById('levelUpRank')
+// 邀请码相关元素
+const myInviteCode = document.getElementById('myInviteCode')
+const copyCodeBtn = document.getElementById('copyCodeBtn')
+const inviteInput = document.getElementById('inviteInput')
+const bindCodeBtn = document.getElementById('bindCodeBtn')
+const inviteTip = document.getElementById('inviteTip')
 
 // 段位配置
 const RANKS = [
@@ -294,6 +320,10 @@ async function openRankModal() {
   rankCount.textContent = count.toLocaleString()
   rankLevel.textContent = rank.name
   rankScope.textContent = '加载中...'
+  myInviteCode.textContent = '--'
+  inviteInput.value = ''
+  inviteTip.textContent = '生成邀请码后，可在其他设备输入绑定同步数据'
+  inviteTip.className = 'invite-tip'
   rankModal.classList.add('show')
 
   // 获取真实排名
@@ -302,6 +332,12 @@ async function openRankModal() {
     rankScope.textContent = `第 ${res.rank} 名 (${res.percentile})`
   } else {
     rankScope.textContent = '暂无排名'
+  }
+
+  // 获取/生成邀请码
+  const inviteRes = await generateInviteCode()
+  if (inviteRes?.success) {
+    myInviteCode.textContent = inviteRes.inviteCode
   }
 }
 
@@ -325,6 +361,72 @@ rankModal.addEventListener('click', (e) => {
 })
 levelUp.addEventListener('click', () => {
   levelUp.classList.remove('show')
+})
+
+// 复制邀请码
+copyCodeBtn.addEventListener('click', async () => {
+  const code = myInviteCode.textContent
+  if (code === '--') return
+
+  try {
+    await navigator.clipboard.writeText(code)
+    inviteTip.textContent = '邀请码已复制到剪贴板'
+    inviteTip.className = 'invite-tip success'
+  } catch {
+    inviteTip.textContent = '复制失败，请手动复制'
+    inviteTip.className = 'invite-tip error'
+  }
+})
+
+// 绑定邀请码
+bindCodeBtn.addEventListener('click', async () => {
+  const code = inviteInput.value.trim().toUpperCase()
+  if (code.length !== 6) {
+    inviteTip.textContent = '请输入6位邀请码'
+    inviteTip.className = 'invite-tip error'
+    return
+  }
+
+  bindCodeBtn.disabled = true
+  inviteTip.textContent = '绑定中...'
+  inviteTip.className = 'invite-tip'
+
+  const res = await bindInviteCode(code)
+
+  if (res?.success) {
+    // 更新本地用户ID和功德数据
+    localStorage.setItem('muyu_user_id', res.targetUserId)
+    count = res.merit
+    currentRankIndex = res.rankIndex || getRankIndex(count)
+    saveData(count)
+    counterEl.textContent = count.toLocaleString()
+    updateRankDisplay()
+
+    // 更新弹窗显示
+    rankCount.textContent = count.toLocaleString()
+    rankLevel.textContent = RANKS[currentRankIndex].name
+
+    inviteTip.textContent = '绑定成功！数据已同步'
+    inviteTip.className = 'invite-tip success'
+    inviteInput.value = ''
+
+    // 刷新排名信息
+    const rankRes = await fetchRankInfo()
+    if (rankRes?.success) {
+      rankScope.textContent = `第 ${rankRes.rank} 名 (${rankRes.percentile})`
+    }
+
+    // 刷新邀请码
+    const inviteRes = await generateInviteCode()
+    if (inviteRes?.success) {
+      myInviteCode.textContent = inviteRes.inviteCode
+    }
+  } else {
+    inviteTip.textContent = res?.message || '绑定失败，请检查邀请码'
+    inviteTip.className = 'invite-tip error'
+  }
+
+  bindCodeBtn.disabled = false
 })
 
 woodenFish.addEventListener('animationend', (e) => {
