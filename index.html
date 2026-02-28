@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>木鱼</title>
+  </head>
+  <body>
+    <header class="header">
+      <div class="merit-box">
+        <span class="merit-label">功德</span>
+        <span class="counter" id="counter">0</span>
+      </div>
+      <div class="header-btns">
+        <button class="header-btn" id="logBtn" type="button">更新记录</button>
+        <button class="header-btn reset" id="resetBtn" type="button">重置</button>
+      </div>
+    </header>
+    <div class="modal" id="modal">
+      <div class="modal-content">
+        <h3>更新记录</h3>
+        <ul class="log-list">
+          <li><strong>v1.0.0</strong> - 初始版本，敲木鱼积攒功德</li>
+        </ul>
+        <button class="modal-close" id="modalClose">关闭</button>
+      </div>
+    </div>
+    <main class="stage" id="stage">
+      <button class="wooden-fish" id="woodenFish" type="button">
+        <svg viewBox="0 0 320 320" xmlns="http://www.w3.org/2000/svg">
+          <defs>
+            <linearGradient id="woodBody" x1="0%" y1="0%" x2="100%" y2="100%">
+              <stop offset="0%" stop-color="#c9884a" />
+              <stop offset="50%" stop-color="#a06632" />
+              <stop offset="100%" stop-color="#704220" />
+            </linearGradient>
+            <linearGradient id="woodTop" x1="0%" y1="0%" x2="100%" y2="0%">
+              <stop offset="0%" stop-color="#b47840" />
+              <stop offset="100%" stop-color="#7a4a28" />
+            </linearGradient>
+          </defs>
+          <!-- 木鱼主体 -->
+          <ellipse cx="160" cy="180" rx="110" ry="80" fill="url(#woodBody)" />
+          <ellipse cx="160" cy="180" rx="95" ry="68" fill="#7a4a28" opacity="0.35" />
+          <!-- 顶部 -->
+          <ellipse cx="160" cy="110" rx="48" ry="28" fill="url(#woodTop)" />
+          <!-- 纹路 -->
+          <path d="M80 168 Q160 138 240 168" stroke="#5a3218" stroke-width="6" fill="none" stroke-linecap="round" />
+          <path d="M88 198 Q160 170 232 198" stroke="#5a3218" stroke-width="4" fill="none" stroke-linecap="round" opacity="0.85" />
+          <!-- 眼睛 -->
+          <circle cx="120" cy="168" r="10" fill="#4a2a12" />
+          <circle cx="200" cy="168" r="10" fill="#4a2a12" />
+          <!-- 嘴巴 -->
+          <ellipse cx="160" cy="216" rx="22" ry="8" fill="#4a2a12" />
+          <!-- 把手 -->
+          <rect x="152" y="78" width="16" height="22" rx="3" fill="#5a3218" />
+        </svg>
+        <span class="ripple" id="ripple"></span>
+      </button>
+    </main>
+    <script type="module" src="/src/main.js"></script>
+  </body>
+</html>
