@@ -533,3 +533,12 @@ body {
     padding-right: max(1rem, env(safe-area-inset-right));
   }
 }
+
+
+.rank-tip {
+  margin-top: 0.4rem;
+  color: var(--text-color);
+  opacity: 0.75;
+  font-size: 0.82rem;
+  line-height: 1.5;
+}

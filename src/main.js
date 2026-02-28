@@ -80,8 +80,14 @@ const counterEl = document.getElementById('counter')
 const ripple = document.getElementById('ripple')
 const resetBtn = document.getElementById('resetBtn')
 const logBtn = document.getElementById('logBtn')
+const rankBtn = document.getElementById('rankBtn')
 const modal = document.getElementById('modal')
 const modalClose = document.getElementById('modalClose')
+const rankModal = document.getElementById('rankModal')
+const rankClose = document.getElementById('rankClose')
+const rankCount = document.getElementById('rankCount')
+const rankLevel = document.getElementById('rankLevel')
+const rankScope = document.getElementById('rankScope')
 const rankBox = document.getElementById('rankBox')
 const rankIcon = document.getElementById('rankIcon')
 const rankName = document.getElementById('rankName')
@@ -241,14 +247,42 @@ function closeModal() {
   modal.classList.remove('show')
 }
 
+function getLocalPercentile(merit) {
+  if (merit >= 100000) return '前 1%'
+  if (merit >= 50000) return '前 3%'
+  if (merit >= 10000) return '前 10%'
+  if (merit >= 3000) return '前 20%'
+  if (merit >= 1000) return '前 35%'
+  if (merit >= 500) return '前 50%'
+  if (merit >= 100) return '前 70%'
+  return '前 100%'
+}
+
+function openRankModal() {
+  const rank = RANKS[getRankIndex(count)]
+  rankCount.textContent = count.toLocaleString()
+  rankLevel.textContent = rank.name
+  rankScope.textContent = getLocalPercentile(count)
+  rankModal.classList.add('show')
+}
+
+function closeRankModal() {
+  rankModal.classList.remove('show')
+}
+
 // 绑定事件
 woodenFish.addEventListener('click', handleTap)
 woodenFish.addEventListener('touchstart', handleTap, { passive: false })
 resetBtn.addEventListener('click', handleReset)
 logBtn.addEventListener('click', openModal)
+rankBtn.addEventListener('click', openRankModal)
 modalClose.addEventListener('click', closeModal)
+rankClose.addEventListener('click', closeRankModal)
 modal.addEventListener('click', (e) => {
   if (e.target === modal) closeModal()
+})
+rankModal.addEventListener('click', (e) => {
+  if (e.target === rankModal) closeRankModal()
 })
 levelUp.addEventListener('click', () => {
   levelUp.classList.remove('show')
