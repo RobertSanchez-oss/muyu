@@ -21,6 +21,7 @@
       <div class="modal-content">
         <h3>更新记录</h3>
         <ul class="log-list">
+          <li><strong>v1.3.0</strong> - 新增全网排行榜，真实排名</li>
           <li><strong>v1.2.1</strong> - 优化移动端适配，支持刘海屏</li>
           <li><strong>v1.2.0</strong> - 数据安全加固，防止作弊</li>
           <li><strong>v1.1.0</strong> - 新增段位系统，功德越多段位越高</li>
@@ -31,15 +32,12 @@
     </div>
     <div class="modal" id="rankModal">
       <div class="modal-content">
-        <h3>排名信息</h3>
+        <h3>我的排名</h3>
         <ul class="log-list">
           <li>当前功德：<strong id="rankCount">0</strong></li>
-          <li>本机段位：<strong id="rankLevel">初入佛门</strong></li>
-          <li>本机估算分位：<strong id="rankScope">前 100%</strong></li>
+          <li>当前段位：<strong id="rankLevel">初入佛门</strong></li>
+          <li>全网排名：<strong id="rankScope">加载中...</strong></li>
         </ul>
-        <p class="rank-tip">
-          当前为本地估算排名，不代表全网实时排名。若要实现真实共享排名，需要后端服务统一存储并聚合所有用户数据。
-        </p>
         <button class="modal-close" id="rankClose">关闭</button>
       </div>
     </div>

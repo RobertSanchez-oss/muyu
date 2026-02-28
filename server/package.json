@@ -1,0 +1,15 @@
+{
+  "name": "muyu-server",
+  "version": "1.0.0",
+  "description": "木鱼排行榜后端",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "dependencies": {
+    "express": "^4.18.2",
+    "better-sqlite3": "^9.4.3",
+    "cors": "^2.8.5",
+    "uuid": "^9.0.0"
+  }
+}
